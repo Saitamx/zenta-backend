@@ -9,6 +9,9 @@ export interface BookCreationAttributes {
 	description?: string;
 	imageUrl?: string;
 	available?: boolean;
+	// optional foreign keys for normalized relations
+	authorId?: string;
+	publisherId?: string;
 }
 
 @Table({

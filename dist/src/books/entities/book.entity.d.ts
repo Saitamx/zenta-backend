@@ -9,6 +9,8 @@ export interface BookCreationAttributes {
     description?: string;
     imageUrl?: string;
     available?: boolean;
+    authorId?: string;
+    publisherId?: string;
 }
 export declare class Book extends Model<Book, BookCreationAttributes> {
     id: string;

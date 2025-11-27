@@ -16,6 +16,8 @@ const books_module_1 = require("./books/books.module");
 const health_module_1 = require("./health/health.module");
 const user_entity_1 = require("./users/entities/user.entity");
 const book_entity_1 = require("./books/entities/book.entity");
+const author_entity_1 = require("./books/entities/author.entity");
+const publisher_entity_1 = require("./books/entities/publisher.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,20 +29,32 @@ exports.AppModule = AppModule = __decorate([
             }),
             sequelize_1.SequelizeModule.forRootAsync({
                 inject: [config_1.ConfigService],
-                useFactory: (configService) => ({
-                    dialect: 'postgres',
-                    host: configService.get('DATABASE_HOST', 'localhost'),
-                    port: parseInt(configService.get('DATABASE_PORT', '5432'), 10),
-                    username: configService.get('DATABASE_USER', 'postgres'),
-                    password: configService.get('DATABASE_PASSWORD', 'postgres'),
-                    database: configService.get('DATABASE_NAME', 'zenta_cmpc'),
-                    models: [user_entity_1.User, book_entity_1.Book],
-                    autoLoadModels: true,
-                    synchronize: true,
-                    sync: { alter: true },
-                    logging: false,
-                    retry: { max: 5 },
-                }),
+                useFactory: (configService) => {
+                    const sslMode = configService.get('PGSSLMODE') || '';
+                    const sslRequired = sslMode.toLowerCase() === 'require';
+                    return {
+                        dialect: 'postgres',
+                        host: configService.get('DATABASE_HOST', 'localhost'),
+                        port: parseInt(configService.get('DATABASE_PORT', '5432'), 10),
+                        username: configService.get('DATABASE_USER', 'postgres'),
+                        password: configService.get('DATABASE_PASSWORD', 'postgres'),
+                        database: configService.get('DATABASE_NAME', 'zenta_cmpc'),
+                        models: [user_entity_1.User, book_entity_1.Book, author_entity_1.Author, publisher_entity_1.Publisher],
+                        autoLoadModels: true,
+                        synchronize: true,
+                        sync: { alter: true },
+                        logging: false,
+                        retry: { max: 5 },
+                        dialectOptions: sslRequired
+                            ? {
+                                ssl: {
+                                    require: true,
+                                    rejectUnauthorized: false,
+                                },
+                            }
+                            : undefined,
+                    };
+                },
             }),
             users_module_1.UsersModule,
             auth_module_1.AuthModule,

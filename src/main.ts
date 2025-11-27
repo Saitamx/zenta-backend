@@ -5,11 +5,17 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpGlobalExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	const corsOrigins =
+		process.env.CORS_ORIGINS?.split(',').map((s) => s.trim()).filter(Boolean) || [
+			'http://localhost:3000',
+			'http://localhost:3001',
+		];
 	app.enableCors({
-		origin: ['http://localhost:3000', 'http://localhost:3001'],
+		origin: corsOrigins,
 		credentials: true,
 		methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],

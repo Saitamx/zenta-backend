@@ -8,9 +8,14 @@ const http_exception_filter_1 = require("./common/filters/http-exception.filter"
 const logging_interceptor_1 = require("./common/interceptors/logging.interceptor");
 const path_1 = require("path");
 async function bootstrap() {
+    var _a;
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const corsOrigins = ((_a = process.env.CORS_ORIGINS) === null || _a === void 0 ? void 0 : _a.split(',').map((s) => s.trim()).filter(Boolean)) || [
+        'http://localhost:3000',
+        'http://localhost:3001',
+    ];
     app.enableCors({
-        origin: ['http://localhost:3000', 'http://localhost:3001'],
+        origin: corsOrigins,
         credentials: true,
         methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
