@@ -9,13 +9,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
-	const corsOrigins =
-		process.env.CORS_ORIGINS?.split(',').map((s) => s.trim()).filter(Boolean) || [
-			'http://localhost:3000',
-			'http://localhost:3001',
-		];
 	app.enableCors({
-		origin: corsOrigins,
+		// Allow all origins (the browser will send its own Origin header)
+		// This simplifies deployment when frontend is hosted on a different domain (e.g. Vercel).
+		origin: true,
 		credentials: true,
 		methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
