@@ -1,0 +1,13 @@
+import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+export declare class UsersService {
+    private readonly userModel;
+    constructor(userModel: typeof User);
+    create(dto: CreateUserDto): Promise<User>;
+    findAll(): Promise<User[]>;
+    findOneById(id: string): Promise<User>;
+    findOneByEmail(email: string): Promise<User | null>;
+    update(id: string, dto: UpdateUserDto): Promise<User>;
+    remove(id: string): Promise<void>;
+}
