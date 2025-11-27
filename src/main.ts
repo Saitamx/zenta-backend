@@ -9,6 +9,17 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	// Manual CORS middleware to ensure headers are always present
+	app.use((req, res, next) => {
+		res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+		res.header('Access-Control-Allow-Credentials', 'true');
+		res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
+		res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+		if (req.method === 'OPTIONS') {
+			return res.sendStatus(204);
+		}
+		next();
+	});
 	app.enableCors({
 		// Allow all origins (the browser will send its own Origin header)
 		// This simplifies deployment when frontend is hosted on a different domain (e.g. Vercel).

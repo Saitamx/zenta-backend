@@ -9,6 +9,16 @@ const logging_interceptor_1 = require("./common/interceptors/logging.interceptor
 const path_1 = require("path");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.use((req, res, next) => {
+        res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+        if (req.method === 'OPTIONS') {
+            return res.sendStatus(204);
+        }
+        next();
+    });
     app.enableCors({
         origin: true,
         credentials: true,
